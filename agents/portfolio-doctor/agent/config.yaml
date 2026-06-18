@@ -1,0 +1,35 @@
+name: 持仓体检官
+description: 美股组合诊断 Agent，体检集中度/相关性/回撤敞口并给再平衡建议。
+version: 1.0.0
+
+form:
+  fields:
+    - id: holdings
+      name: 你的持仓
+      type: textarea
+      required: true
+      description: 列出股票代码、仓位占比或市值、成本（每行一只），例如：NVDA 30%；TSLA 20%；现金 10%
+      example: NVDA 30%; AMD 15%; TSLA 20%; SMCI 15%; 现金 20%
+    - id: risk_profile
+      name: 风险偏好
+      type: select
+      required: false
+      options:
+        - label: 保守
+          value: conservative
+        - label: 稳健
+          value: balanced
+        - label: 进取
+          value: aggressive
+    - id: capital
+      name: 总资金（可选）
+      type: string
+      required: false
+      description: 便于估算单股上限和回撤金额，例如：10万美元
+
+memory:
+  persist_fields: [holdings, risk_profile, capital, health_score, top_risk, concentration_pct]
+  aggregations:
+    - field: health_score
+      ops: [avg, count]
+      group_by: [risk_profile]
